@@ -1,12 +1,6 @@
 import {Component, OnInit} from '@angular/core'
-import {HttpClient} from '@angular/common/http'
 import {delay} from "rxjs";
-
-export interface Todo {
-  completed: boolean
-  title: string
-  id?: number
-}
+import {Todo, TodosServiceService} from "./todos-service.service";
 
 @Component({
   selector: 'app-root',
@@ -19,7 +13,7 @@ export class AppComponent implements OnInit {
   todoTitle = ''
   loading = false
 
-  constructor(private http: HttpClient) {}
+  constructor(private service:TodosServiceService) {}
 
   ngOnInit() {
     this.addFetch()
@@ -35,7 +29,7 @@ export class AppComponent implements OnInit {
       completed: false
     }
 
-    this.http.post<Todo>("https://jsonplaceholder.typicode.com/todos",newTodo)
+    this.service.addTodo(newTodo)
       .subscribe(todo => {
         this.todos.push(todo)
         this.todoTitle = ''
@@ -44,8 +38,7 @@ export class AppComponent implements OnInit {
 
   addFetch() {
     this.loading = true
-    this.http.get<Todo[]>('https://jsonplaceholder.typicode.com/todos?_limit=5')
-      .pipe(delay(1500))
+    this.service.fetch()
       .subscribe(todos => {
         this.todos = todos
         this.loading = false
@@ -53,7 +46,7 @@ export class AppComponent implements OnInit {
   }
 
   removeTodo(id: any) {
-    this.http.delete<void>(`https://jsonplaceholder.typicode.com/todos/${id}`)
+    this.service.removeTodo(id)
       .subscribe( () => {
         this.todos = this.todos.filter(t => t.id !== id)
       })
