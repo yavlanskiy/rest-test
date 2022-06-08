@@ -27,4 +27,11 @@ export class TodosServiceService {
   removeTodo(id:any):Observable<void>{
     return this.http.delete<void>(`https://jsonplaceholder.typicode.com/todos/${id}`)
   }
+
+  completedTodo(id:any):Observable<Todo>{
+    return this.http.put<Todo>(`https://jsonplaceholder.typicode.com/todos/${id}`,{
+      completed :true
+    })
+
+  }
 }
